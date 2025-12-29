@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-slate-50 antialiased;
+  background: radial-gradient(circle at top left, #1d2b64 0, transparent 55%),
+    radial-gradient(circle at top right, #312e81 0, transparent 55%),
+    radial-gradient(circle at bottom, #020617 0, #000 55%);
+}
+
+.glass-panel {
+  @apply bg-surface/80 border border-white/5 shadow-glass backdrop-blur-md rounded-2xl;
+}
+
+.tag-pill {
+  @apply px-3 py-1 rounded-full text-xs font-medium border border-white/10 bg-white/5;
+}
+
+

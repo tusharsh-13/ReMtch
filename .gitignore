@@ -1,0 +1,27 @@
+/.venv
+.venv/
+venv/
+.env
+.env.local
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+build/
+dist/
+*.egg-info/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.vscode/
+.DS_Store
+*.log
+*.sqlite3
+# Editor folders
+.idea/
+*.iml
+
+# OS files
+Thumbs.db
+desktop.ini
