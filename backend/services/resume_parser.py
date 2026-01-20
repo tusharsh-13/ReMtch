@@ -5,9 +5,9 @@ from typing import List
 import pdfplumber
 from fastapi import UploadFile
 
-from models.schemas import CandidateProfile
-from utils.skills_db import NORMALISED_SKILLS, normalise_skill
-from services.spacy_assistant import get_spacy_assistant
+from ..models.schemas import CandidateProfile
+from ..utils.skills_db import NORMALISED_SKILLS, normalise_skill
+from .spacy_assistant import get_spacy_assistant
 
 
 EMAIL_REGEX = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")

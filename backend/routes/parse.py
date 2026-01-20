@@ -1,8 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 
-from services.resume_parser import ResumeParser
-from models.schemas import ParseResumeResponse
+from ..services.resume_parser import ResumeParser
+from ..models.schemas import ParseResumeResponse
 
 
 router = APIRouter(tags=["Parsing"])

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 
-from services.resume_parser import ResumeParser
-from services.jd_parser import JobDescriptionParser
-from services.matcher import MatchEngine
-from models.schemas import MatchResponse
+from ..services.resume_parser import ResumeParser
+from ..services.jd_parser import JobDescriptionParser
+from ..services.matcher import MatchEngine
+from ..models.schemas import MatchResponse
 
 
 router = APIRouter(tags=["Matching"])

@@ -1,6 +1,6 @@
 from typing import List
 
-from utils.skills_db import NORMALISED_SKILLS
+from ..utils.skills_db import NORMALISED_SKILLS
 
 
 class JobDescriptionParser:

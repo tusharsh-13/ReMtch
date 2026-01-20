@@ -4,8 +4,8 @@ from typing import List
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from models.schemas import MatchEngineResult
-from utils.skills_db import normalise_skill
+from ..models.schemas import MatchEngineResult
+from ..utils.skills_db import normalise_skill
 
 
 @dataclass
