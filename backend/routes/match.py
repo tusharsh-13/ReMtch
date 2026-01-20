@@ -40,7 +40,6 @@ async def match_resume_to_jd(
             candidate_profile=candidate_profile,
             match_score=result.match_score,
             matched_skills=result.matched_skills,
-            missing_skills=result.missing_skills,
             semantic_similarity=result.semantic_similarity,
             skill_match_percentage=result.skill_match_percentage,
         )

@@ -35,7 +35,6 @@ class MatchResponse(BaseModel):
     candidate_profile: CandidateProfile
     match_score: float
     matched_skills: List[str]
-    missing_skills: List[str]
     semantic_similarity: float
     skill_match_percentage: float
 

@@ -6,7 +6,7 @@ import { MatchScoreCircle } from "./MatchScoreCircle.jsx";
 export function ResultsCard({ result }) {
   if (!result) return null;
 
-  const { candidate_profile, match_score, matched_skills, missing_skills, semantic_similarity, skill_match_percentage } =
+  const { candidate_profile, match_score, matched_skills, semantic_similarity, skill_match_percentage } =
     result;
 
   return (
@@ -98,26 +98,8 @@ export function ResultsCard({ result }) {
                   ))}
                 </div>
               ) : (
-                <div className="text-slate-400 text-xs mt-1">No direct skill matches.</div>
-              )}
-            </div>
-
-            <div>
-              <SectionHeading label="Missing Skills" tone="negative" />
-              {missing_skills?.length ? (
-                <div className="flex flex-wrap gap-1.5 mt-1">
-                  {missing_skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="tag-pill border-red-400/40 text-red-200 bg-red-500/10"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              ) : (
                 <div className="text-slate-400 text-xs mt-1">
-                  No missing skills detected from the JD list.
+                  No direct skill matches between the resume and JD.
                 </div>
               )}
             </div>

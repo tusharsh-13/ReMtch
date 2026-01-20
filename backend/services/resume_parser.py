@@ -54,14 +54,12 @@ class ResumeParser:
         if not name:
             name = self._guess_name(text, email)
         
-        # Enhanced skill extraction with spaCy if available
-        if spacy_assistant.is_available():
-            skills = spacy_assistant.extract_skills_with_pos(text, list(NORMALISED_SKILLS))
-            # Merge with keyword-based extraction
-            keyword_skills = self._extract_skills(text)
-            skills = sorted(list(set(skills + keyword_skills)))
-        else:
-            skills = self._extract_skills(text)
+        # Skill extraction
+        # NOTE: We intentionally keep this STRICT and keyword‑based so that
+        # we only return skills that are explicitly mentioned in the resume text.
+        # spaCy‑based suggestions are avoided here because they can introduce
+        # skills that are not actually present in the document.
+        skills = self._extract_skills(text)
         
         education = self._extract_education(text)
         experience = self._extract_experience(text)
@@ -127,7 +125,8 @@ class ResumeParser:
         text_lower = text.lower()
         detected = set()
         for vocab_skill in NORMALISED_SKILLS:
-            if vocab_skill in text_lower:
+            # Use word boundaries to avoid partial matches
+            if re.search(r'\b' + re.escape(vocab_skill) + r'\b', text_lower):
                 detected.add(vocab_skill)
         # Return nicely cased skills
         return sorted({skill.title() for skill in detected})
@@ -157,8 +156,15 @@ class ResumeParser:
         return edu_lines
 
     def _extract_experience(self, text: str) -> List[str]:
-        experience_keywords = [
-            "experience",
+        """
+        Extract only concrete work / internship experience entries.
+
+        We try to avoid:
+        - Generic summary sentences about being a student
+        - Education lines that mention degrees/CGPA
+        - Section headers like "Experience"
+        """
+        job_keywords = [
             "intern",
             "internship",
             "developer",
@@ -166,14 +172,45 @@ class ResumeParser:
             "manager",
             "lead",
             "architect",
-            "years of experience",
+            "analyst",
         ]
+        helper_keywords = [
+            "duration",  # e.g. "Duration: Nov 2025 – Dec 2025"
+            "worked as",
+            "work experience",
+        ]
+        # Things we explicitly do NOT want in experience items
+        exclude_keywords = [
+            "b.tech",
+            "bachelor",
+            "b.e",
+            "cgpa",
+            "student",
+            "education",
+            "university",
+            "college",
+            "institute",
+        ]
+
         lines = [l.strip() for l in text.splitlines() if l.strip()]
         exp_lines: List[str] = []
         for line in lines:
             lower = line.lower()
-            if any(k in lower for k in experience_keywords):
+
+            # Skip obvious section headers
+            if lower in {"experience", "work experience", "professional experience"}:
+                continue
+
+            # Skip lines that clearly belong to education or summary
+            if any(bad in lower for bad in exclude_keywords):
+                continue
+
+            # Keep lines that mention job / role keywords or duration markers
+            if any(k in lower for k in job_keywords) or any(
+                k in lower for k in helper_keywords
+            ):
                 exp_lines.append(line)
+
         return exp_lines
 
     def _extract_certifications(self, text: str) -> List[str]:

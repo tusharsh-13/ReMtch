@@ -70,19 +70,58 @@ class SpacyAssistant:
     def extract_name_with_ner(self, text: str) -> Optional[str]:
         """
         Extract candidate name using spaCy NER (PERSON entities).
-        Returns the first PERSON entity found, or None.
+        Returns the most likely candidate name, preferring entities that:
+        - Appear near the TOP of the document
+        - Look like real person names (no digits, not generic words or titles)
         """
         if not self.is_available():
             return None
 
-        entities = self.extract_entities(text)
-        persons = entities.get("PERSON", [])
+        # Work directly with the doc so we can use entity positions
+        doc = self.nlp(text[:50000])
 
-        if persons:
-            # Return the first person entity (usually the candidate)
-            return persons[0]
+        # Common non‑name phrases that sometimes get tagged as PERSON
+        banned_phrases = {
+            "resume",
+            "cv",
+            "curriculum",
+            "vitae",
+            "software engineer",
+            "software developer",
+            "full stack developer",
+            "data scientist",
+            "data analyst",
+            "machine learning engineer",
+        }
 
-        return None
+        candidates = []
+        for ent in doc.ents:
+            if ent.label_ != "PERSON":
+                continue
+
+            person = ent.text.strip()
+            lower_person = person.lower()
+
+            # Filter out unlikely names: too short, contain digits, or are common words/titles
+            words = person.split()
+            if (
+                len(words) < 2  # At least first + last name
+                or len(person) < 5  # Minimum length
+                or any(char.isdigit() for char in person)  # No digits
+                or lower_person in banned_phrases  # Not generic titles
+            ):
+                continue
+
+            # Prefer entities that appear near the top of the document
+            start_pos = ent.start_char
+            candidates.append((start_pos, -len(person), person))
+
+        if not candidates:
+            return None
+
+        # Sort by: (position in text, then longer names first)
+        candidates.sort()
+        return candidates[0][2]
 
     def extract_skills_with_pos(self, text: str, skill_keywords: List[str]) -> List[str]:
         """
@@ -213,6 +252,7 @@ def get_spacy_assistant() -> SpacyAssistant:
     if _assistant is None:
         _assistant = SpacyAssistant()
     return _assistant
+
 
 
 
